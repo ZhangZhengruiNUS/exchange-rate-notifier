@@ -1,0 +1,5 @@
+.env
+chrome_deb/google-chrome-stable_current_amd64.deb:Zone.Identifier
+__pycache__/rate_fetcher.cpython-310.pyc
+chromedriver
+chrome_deb/google-chrome-stable_current_amd64.deb
