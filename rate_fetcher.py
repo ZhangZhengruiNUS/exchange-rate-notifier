@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def get_exchange_rate():
+def get_sgd_rate():
     # 获取当前脚本的目录
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -13,7 +13,7 @@ def get_exchange_rate():
     chrome_driver_path = os.path.join(current_dir, 'chromedriver')
 
     # 然后创建Service时使用这个路径
-    s = Service(chrome_driver_path, log_path='chromedriver.log')
+    s = Service(chrome_driver_path)
 
     # 初始化webdriver
     print("正在初始化webdriver...")
@@ -45,7 +45,7 @@ def get_exchange_rate():
 
     # 遍历表格行，寻找新加坡元的现汇卖出价
     found = False  # 标记是否找到数据
-    exchange_rate = 99999  # 存储汇率值
+    exchange_rate = 99999.0  # 存储汇率值
     for row in rows:
         cells = row.find_elements(By.TAG_NAME, 'td')
         currency = cells[0].text.strip()  # 币种名称
@@ -66,6 +66,4 @@ def get_exchange_rate():
 
 # 如果直接运行这个文件，就执行get_exchange_rate()
 if __name__ == "__main__":
-    print("开始获取汇率...")
-    rate = get_exchange_rate()
-    print(f"获取到的汇率为: {rate}")
+    rate = get_sgd_rate()
