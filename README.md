@@ -71,13 +71,14 @@
 
 1. **设置环境变量**  
 在项目根目录下创建一个`.env`文件，并定义以下变量：
-- `SENDER_EMAIL`: 发送通知的邮箱地址。
-- `RECEIVER_EMAIL`: 接收通知的邮箱地址。
-- `PASSWORD`: 发送者邮箱账户的密码或应用专用密码。
-- `SMTP_SERVER`: 发送者邮箱账户的SMTP服务器地址。
-- `SMTP_PORT`: SMTP服务器端口。
-- `THRESHOLD_RATE`: 汇率阈值。
-- `QUERY_INTERVAL`: 检查汇率的时间间隔（以秒为单位）。
+- `SENDER_EMAIL`: 发送通知的邮箱地址
+- `RECEIVER_EMAIL`: 接收通知的邮箱地址
+- `PASSWORD`: 发送者邮箱账户的密码或应用专用密码
+- `SMTP_SERVER`: 发送者邮箱账户的SMTP服务器地址
+- `SMTP_PORT`: SMTP服务器端口
+- `RATE_THRESHOLD`: 汇率阈值
+- `MISSING_DATA_THRESHOLD`: 连续未找到数据的阈值
+- `QUERY_INTERVAL`: 检查汇率的时间间隔（以秒为单位）
 
 2. **运行应用程序:**
     ```python
