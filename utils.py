@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 import os
 import smtplib
 from dotenv import load_dotenv
+import pytz
 
 def load_config():
     # 加载基础参数
@@ -39,4 +40,5 @@ def send_email(subject, msg_body, config):
     print("[" + get_current_time() + "] 已发送邮件至 " + config['receiver_email'])
 
 def get_current_time():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    tz = pytz.timezone('Asia/Singapore')  # 指定新加坡时区
+    return datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
