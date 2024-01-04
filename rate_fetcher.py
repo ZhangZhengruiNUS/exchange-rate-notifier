@@ -6,15 +6,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import utils
+from decorators import timeit
 
 # 常量定义
 BASE_URL = 'https://www.icbc.com.cn/column/1438058341489590354.html'  # 目标URL
 MAX_WAIT_TIME = 30  # 最大等待时间，单位秒
 
+@timeit
 def get_sgd_rate():
     
     found = False  # 标记是否找到数据
     exchange_rate = 0.0  # 存储汇率值
+    driver = None
         
     try:
         # 获取当前脚本的目录
@@ -27,6 +30,7 @@ def get_sgd_rate():
         s = Service(chrome_driver_path)
 
         # 初始化webdriver
+        print("[" + utils.get_current_time() + "] 初始化webdriver...")
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")  # 绕过操作系统安全模型，必须是第一个选项
@@ -66,8 +70,9 @@ def get_sgd_rate():
 
     finally:
         # 无论成功或失败都尝试关闭浏览器
-        driver.quit()
-
+        if driver is not None:
+            driver.quit()
+    
     # 返回获取到的汇率
     return found, exchange_rate
 
