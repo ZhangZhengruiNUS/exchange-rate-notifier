@@ -4,3 +4,4 @@ __pycache__/rate_fetcher.cpython-310.pyc
 chromedriver
 chrome_deb/google-chrome-stable_current_amd64.deb
 __pycache__/utils.cpython-310.pyc
+__pycache__/decorators.cpython-310.pyc
