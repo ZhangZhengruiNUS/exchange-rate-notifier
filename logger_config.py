@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
+from dotenv import load_dotenv
 
 def setup_logger(logger_name):
     
@@ -28,8 +29,8 @@ def setup_logger(logger_name):
     
     # 添加处理器
     logger.addHandler(file_handler)  # 添加文件日志处理器
-    env = os.getenv('ENV_TYPE', '')
-    if not env.lower() == 'production':  # 生产环境不添加控制台日志处理器
+    load_dotenv()
+    if not os.getenv('ENV_TYPE', '').lower() == 'production':  # 生产环境不添加控制台日志处理器
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
