@@ -1,10 +1,11 @@
-from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
 import smtplib
 from dotenv import load_dotenv
-import pytz
+from logger_config import setup_logger
+
+logger = setup_logger(__name__)
 
 def load_config():
     # 加载基础参数
@@ -30,15 +31,11 @@ def send_email(subject, msg_body, config):
     msg.attach(MIMEText(msg_body, 'plain'))
 
     # 发送邮件
-    print("[" + get_current_time() + "] 正在发送邮件...")
+    logger.info("正在发送邮件")
     server = smtplib.SMTP(config["smtp_server"], config["smtp_port"])
     server.starttls()  # 启动TLS加密
     server.login(config["sender_email"], config["password"])
     text = msg.as_string()
     server.sendmail(config["sender_email"], config["receiver_email"], text)
     server.quit()
-    print("[" + get_current_time() + "] 已发送邮件至 " + config['receiver_email'])
-
-def get_current_time():
-    tz = pytz.timezone('Asia/Singapore')  # 指定新加坡时区
-    return datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+    logger.info(f"已发送邮件至{config['receiver_email']}")
