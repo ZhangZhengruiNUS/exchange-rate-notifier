@@ -15,9 +15,8 @@ def setup_logger(logger_name):
     # 创建TimedRotatingFileHandler
     file_handler = TimedRotatingFileHandler(log_file_path,
                                             when="midnight",
-                                            interval=3,
-                                            backupCount=7, # 保留7天
-                                            utc=True)
+                                            interval=1, # 每天轮换一次
+                                            backupCount=7)  # 保留7天
     formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')  #设置日志格式
     file_handler.setFormatter(formatter)
     file_handler.suffix = "%Y-%m-%d"
