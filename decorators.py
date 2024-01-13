@@ -1,6 +1,8 @@
 import time
 from functools import wraps
-import utils
+from logger_config import setup_logger
+
+logger = setup_logger(__name__)
 
 def timeit(func):
     @wraps(func)
@@ -14,7 +16,7 @@ def timeit(func):
         hours, remainder = divmod(elapsed_time, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        print("[{}] {}函数的执行时间为：{}时{}分{}秒".format(utils.get_current_time(), func.__name__, int(hours), int(minutes), int(seconds)))
+        logger.info(f"{func.__name__}函数的执行时间为：{int(hours)}时{int(minutes)}分{int(seconds)}秒")
 
         return result
 
