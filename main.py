@@ -7,12 +7,14 @@ logger = setup_logger(__name__)
 
 def main():
     logger.info("-----汇率通知器开始启动-----")
-    unexpected_stop = True
+    
+    # 基础变量定义
+    nfound_count = 0  # 连续未找到数据计数
+    
     # 加载基础参数
     config = utils.load_config()
 
     # 主循环
-    nfound_count = 0  # 连续未找到数据计数
     try:
         while True:
             # 获取最新汇率
@@ -33,22 +35,23 @@ def main():
                     utils.send_email("汇率通知器报警",
                                     f"已超过设定阈值{config['missing_data_threshold']}次未找到数据，请检查服务器网络状况或网页结构是否发生变化！",
                                     config)
-                    logger.error(f"-----汇率通知器由于超过设定阈值{config['missing_data_threshold']}次未找到数据，已自动停止-----")
-                    unexpected_stop = False
+                    logger.error(f"汇率通知器由于超过设定阈值{config['missing_data_threshold']}次未找到数据，已自动终止")
                     break
             
             # 查询间隔
             time.sleep(config['query_interval'])
     except KeyboardInterrupt:
-        logger.info("-----汇率通知器已手动停止-----")
-        unexpected_stop = False
+        # 手动停止异常
+        logger.info("汇率通知器已手动停止")
+    except Exception as e:
+        # 其他异常（发送邮件）
+        logger.critical(f"汇率通知器异常终止: {e}", exc_info=True)
+        utils.send_email("汇率通知器报警",
+                            f"主程序由于不知名原因意外停止，请检查服务器运行状况！\n报错信息如下：\n{e}",
+                            config)
     finally:
-        # 当程序意外停止时，发送邮件
-        if unexpected_stop:
-            logger.critical("-----汇率通知器已意外停止-----")
-            utils.send_email("汇率通知器报警",
-                             "主程序由于不知名原因意外停止，请检查服务器运行状况！",
-                             config)
+        logger.info("-----汇率通知器已终止-----")
+            
 
 if __name__ == '__main__':
     main()
