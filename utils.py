@@ -4,6 +4,7 @@ import os
 import smtplib
 from dotenv import load_dotenv
 from logger_config import setup_logger
+import psutil
 
 logger = setup_logger(__name__)
 
@@ -39,3 +40,17 @@ def send_email(subject, msg_body, config):
     server.sendmail(config["sender_email"], config["receiver_email"], text)
     server.quit()
     logger.info(f"已发送邮件至{config['receiver_email']}")
+
+def log_process_resources():
+    # 获取当前进程ID
+    pid = os.getpid()
+    
+    # 使用psutil获取进程对象
+    current_process = psutil.Process(pid)
+
+    # 获取CPU和内存使用信息
+    cpu_usage = current_process.cpu_percent(interval=1.0)  # 可以指定检测间隔
+    memory_usage = current_process.memory_percent()  # 内存使用百分比
+
+    # 记录日志
+    logger.info(f"当前进程[{pid}]的CPU使用率: {cpu_usage:.2f}% 内存使用率: {memory_usage:.2f}%")
