@@ -4,13 +4,16 @@ from logging.handlers import TimedRotatingFileHandler
 import os
 from dotenv import load_dotenv
 
+# 常量定义
+LOG_DIR = 'logs'  # 日志文件相对目录
+LOG_FILE_PREFIX = "app"  # 日志文件前缀
+
 def setup_logger(logger_name):
     
     # 创建日志文件路径
-    log_dir = 'logs'
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
-    log_file_path = log_dir + '/app_' + datetime.now().strftime("%Y-%m-%d") + '.log'
+    if not os.path.exists(LOG_DIR):
+        os.makedirs(LOG_DIR)
+    log_file_path = custom_log_file_path()
 
     # 创建TimedRotatingFileHandler
     file_handler = TimedRotatingFileHandler(log_file_path,
@@ -20,7 +23,7 @@ def setup_logger(logger_name):
     formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')  #设置日志格式
     file_handler.setFormatter(formatter)
     file_handler.suffix = "%Y-%m-%d"
-    file_handler.namer = lambda name: name.replace(".log", "") + "_" + datetime.now().strftime("%Y-%m-%d") + ".log"
+    file_handler.namer = custom_log_file_path
 
     # 创建logger
     logger = logging.getLogger(logger_name)
@@ -35,6 +38,9 @@ def setup_logger(logger_name):
         logger.addHandler(console_handler)
 
     return logger
+
+def custom_log_file_path(name=None):
+    return LOG_DIR + "/" + LOG_FILE_PREFIX + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'
 
 if __name__ == "__main__":
     logger = setup_logger(__name__)
