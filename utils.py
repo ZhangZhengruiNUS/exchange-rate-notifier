@@ -66,7 +66,8 @@ def write_to_dynamodb(rate):
 
     # 准备数据
     data = {
-        'Time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'Date': datetime.now().strftime('%Y-%m-%d'),
+        'Time': datetime.now().strftime('%H:%M:%S'),
         'Rate': Decimal(str(rate))
     }
 
