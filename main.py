@@ -36,9 +36,9 @@ def main():
                                     config)
                     logger.error(f"汇率通知器由于超过设定阈值{config['missing_data_threshold']}次未找到数据，已自动终止")
                     break
-            
-            time.sleep(config['query_interval'])  # 设置查询间隔
+                
             logger.info(f"正在等待查询间隔{config['query_interval']}")
+            time.sleep(config['query_interval'])  # 设置查询间隔
             
     except KeyboardInterrupt:
         # 手动停止异常
