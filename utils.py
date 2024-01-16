@@ -1,4 +1,3 @@
-from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
@@ -6,8 +5,6 @@ import smtplib
 from dotenv import load_dotenv
 from logger_config import setup_logger
 import psutil
-import boto3
-from decimal import Decimal
 
 logger = setup_logger(__name__)
 
@@ -35,7 +32,7 @@ def send_email(subject, msg_body, config):
     msg.attach(MIMEText(msg_body, 'plain'))
 
     # 发送邮件
-    logger.info("正在发送邮件")
+    logger.info("正在发送邮件...")
     server = smtplib.SMTP(config["smtp_server"], config["smtp_port"])
     server.starttls()  # 启动TLS加密
     server.login(config["sender_email"], config["password"])
@@ -58,20 +55,3 @@ def log_process_resources():
     # 记录日志
     logger.info(f"当前进程[{pid}]的CPU使用率: {cpu_usage:.2f}% 内存使用率: {memory_usage:.2f}%")
     
-def write_to_dynamodb(rate):
-    # 创建 DynamoDB 资源
-    logger.info("正在创建DynamoDB资源")
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('SGD_EXCHANGE_RATE')
-
-    # 准备数据
-    data = {
-        'Date': datetime.now().strftime('%Y-%m-%d'),
-        'Time': datetime.now().strftime('%H:%M:%S'),
-        'Rate': Decimal(str(rate))
-    }
-
-    # 写入数据
-    logger.info("正在写入DynamoDB")
-    table.put_item(Item=data)
-    logger.info("已写入DynamoDB")

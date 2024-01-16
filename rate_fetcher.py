@@ -33,7 +33,7 @@ def get_sgd_rate():
 
         # 初始化webdriver
         log_process_resources()
-        logger.info("正在初始化webdriver")
+        logger.info("正在初始化webdriver...")
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--headless")  # 无头模式
         chrome_options.add_argument("--no-sandbox")  # 绕过操作系统安全模型，必须是第一个选项
@@ -47,18 +47,18 @@ def get_sgd_rate():
 
         # 打开目标网页
         log_process_resources()
-        logger.info("正在打开网页")
+        logger.info("正在打开网页...")
         driver.get(BASE_URL)
 
         # 定位到表格的父元素，确保表格加载完成
         log_process_resources()
-        logger.info("等待网页数据动态加载")
+        logger.info("正在等待网页数据动态加载...")
         wait = WebDriverWait(driver, MAX_WAIT_TIME)  # 最多等待时间
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.el-table--mini')))  # 需要根据实际页面结构确定
 
         # 定位到外汇信息的表格
         log_process_resources()
-        logger.info("正在定位数据")
+        logger.info("正在定位数据...")
         rows = driver.find_elements(By.XPATH, '//tr[contains(@class, "el-table__row")]')
 
         # 遍历表格行，寻找新加坡元的现汇卖出价
