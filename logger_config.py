@@ -9,6 +9,9 @@ LOG_DIR = 'logs'  # 日志文件相对目录
 LOG_FILE_PREFIX = "app"  # 日志文件前缀
 
 def setup_logger(logger_name):
+    # 如果已经创建过logger，直接返回
+    if logger_name in logging.root.manager.loggerDict:
+        return logging.getLogger(logger_name)
     
     # 创建日志文件路径
     if not os.path.exists(LOG_DIR):
