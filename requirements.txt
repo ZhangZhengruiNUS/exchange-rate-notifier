@@ -1,4 +1,5 @@
 boto3==1.34.19
+matplotlib==3.8.2
 psutil==5.9.7
 python-dotenv==1.0.0
 selenium==4.16.0
