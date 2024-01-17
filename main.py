@@ -1,8 +1,8 @@
 import time
 from rate_fetcher import get_sgd_rate
-import utils
 from logger_config import setup_logger
-import dynamodb_utils
+from utils import common_utils, dynamodb_utils, email_utils
+from config import Config
 
 logger = setup_logger(__name__)
 
@@ -12,8 +12,8 @@ def main():
     # 基础变量定义
     nfound_count = 0  # 连续未找到数据计数
     
-    # 加载基础参数
-    config = utils.load_config()
+    # 创建基础参数Config对象
+    config = Config()
 
     # 主循环
     try:
@@ -24,31 +24,53 @@ def main():
             # 判断是否找到数据
             if found:
                 nfound_count = 0  # 重置连续未找到数据计数
-                dynamodb_utils.write_to_dynamodb(current_rate)  # 写入AWS DynamoDB
-                if current_rate < config["rate_threshold"]:  # 判断是否低于阈值
-                    utils.send_email("新加坡汇率通知",
-                                    f"当前SGD汇率为{current_rate}，低于设定阈值{config['rate_threshold']}，可以考虑购汇！",
-                                    config)
+                # 写入数据库
+                dynamodb_utils.write_to_dynamodb(current_rate)
+                # 判断是否低于阈值
+                if current_rate < float(config.get_parameter("RATE_THRESHOLD")):
+                    # 查询最近两天的数据
+                    data = dynamodb_utils.query_recent_days_data(2)
+                    if data is None:
+                        email_utils.send_email("汇率通知器报警",
+                                        f"汇率通知器未查询到数据库中最近{2}天的数据，请检查数据库是否正常！",
+                                        config)
+                        logger.error(f"汇率通知器未查询到数据库中最近{2}天的数据，已自动终止")
+                        break
+                    # 绘制折线图
+                    if not common_utils.plot_data(data, 2, config.get_parameter("PLOT_PATH")):
+                        email_utils.send_email("汇率通知器报警",
+                                        f"汇率通知器绘制图表失败，请检查服务器或程序是否正常！",
+                                        config)
+                        logger.error(f"汇率通知器绘制图表失败，已自动终止")
+                        break
+                    # 发送提醒邮件
+                    email_utils.send_email("新加坡汇率通知",
+                                    f"当前SGD汇率为{current_rate}，低于设定阈值{config.get_parameter('RATE_THRESHOLD')}，可以考虑购汇！",
+                                    config, image_path=config.get_parameter("PLOT_PATH"))
+                    # 删除折线图
+                    common_utils.delete_file(config.get_parameter("PLOT_PATH"))
             else:
                 nfound_count += 1 # 连续未找到数据计数加1
-                if nfound_count > config["missing_data_threshold"]:  # 判断未找到数据次数是否大于阈值
-                    utils.send_email("汇率通知器报警",
-                                    f"已超过设定阈值{config['missing_data_threshold']}次未找到数据，请检查服务器网络状况或网页结构是否发生变化！",
+                # 判断未找到数据次数是否大于阈值
+                if nfound_count > int(config.get_parameter("MISSING_DATA_THRESHOLD")):
+                    email_utils.send_email("汇率通知器报警",
+                                    f"已超过设定阈值{config.get_parameter('MISSING_DATA_THRESHOLD')}次未找到数据，请检查服务器网络状况或网页结构是否发生变化！",
                                     config)
-                    logger.error(f"汇率通知器由于超过设定阈值{config['missing_data_threshold']}次未找到数据，已自动终止")
+                    logger.error(f"汇率通知器由于超过设定阈值{config.get_parameter('MISSING_DATA_THRESHOLD')}次未找到数据，已自动终止")
                     break
-                
-            logger.info(f"正在等待查询间隔{config['query_interval']}秒...")
-            time.sleep(config['query_interval'])  # 设置查询间隔
+            
+            # 设置查询间隔
+            logger.info(f"正在等待查询间隔{config.get_parameter('QUERY_INTERVAL')}秒...")
+            time.sleep(int(config.get_parameter('QUERY_INTERVAL')))
             
     except KeyboardInterrupt:
-        # 手动停止异常
+        # 手动停止
         logger.info("汇率通知器已手动停止")
         
     except Exception as e:
         # 其他异常（发送邮件）
         logger.critical(f"汇率通知器异常终止: {e}", exc_info=True)
-        utils.send_email("汇率通知器报警",
+        email_utils.send_email("汇率通知器报警",
                             f"主程序由于不知名原因意外停止，请检查服务器运行状况！\n报错信息如下：\n{e}",
                             config)
         

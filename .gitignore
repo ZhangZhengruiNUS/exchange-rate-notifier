@@ -1,6 +1,6 @@
 .env
-chrome_deb/google-chrome-stable_current_amd64.deb:Zone.Identifier
+chrome_deb/
 __pycache__/
 chromedriver
-chrome_deb/google-chrome-stable_current_amd64.deb
 logs/
+temp/
