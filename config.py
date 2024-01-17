@@ -13,8 +13,8 @@ class Config:
             'SMTP_PORT': int(os.getenv('SMTP_PORT')),  #SMTP服务器端口
             'PLOT_PATH': os.getenv('PLOT_PATH'),  #绘制图片路径
         }
-        # 变量定义（邮件接收者，汇率阈值，连续未找到数据的阈值，查询间隔）
-        self.__variables = ['RECEIVER_EMAIL', 'RATE_THRESHOLD', 'MISSING_DATA_THRESHOLD', 'QUERY_INTERVAL']
+        # 变量定义（邮件接收者，汇率阈值，连续未找到数据的阈值，查询间隔，绘制图片数据的最近天数）
+        self.__variables = ['RECEIVER_EMAIL', 'RATE_THRESHOLD', 'MISSING_DATA_THRESHOLD', 'QUERY_INTERVAL', 'PLOT_RECENT_DAYS']
 
     def update_parameter(self, name, value):
         if name in self.__variables:

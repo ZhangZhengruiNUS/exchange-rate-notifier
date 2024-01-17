@@ -80,6 +80,8 @@
 - `RATE_THRESHOLD`: 汇率阈值
 - `MISSING_DATA_THRESHOLD`: 连续未找到数据的阈值
 - `QUERY_INTERVAL`: 检查汇率的时间间隔（以秒为单位）
+- `PLOT_PATH`: 绘制图片路径
+- `PLOT_RECENT_DAYS`: 绘制图片数据的最近天数
 
 2. **运行应用程序:**
     ```python

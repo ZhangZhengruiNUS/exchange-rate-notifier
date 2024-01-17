@@ -29,15 +29,15 @@ def main():
                 # 判断是否低于阈值
                 if current_rate < float(config.get_parameter("RATE_THRESHOLD")):
                     # 查询最近两天的数据
-                    data = dynamodb_utils.query_recent_days_data(2)
+                    data = dynamodb_utils.query_recent_days_data(int(config.get_parameter("PLOT_RECENT_DAYS")))
                     if data is None:
                         email_utils.send_email("汇率通知器报警",
-                                        f"汇率通知器未查询到数据库中最近{2}天的数据，请检查数据库是否正常！",
+                                        f"汇率通知器未查询到数据库中最近{config.get_parameter('PLOT_RECENT_DAYS')}天的数据，请检查数据库是否正常！",
                                         config)
-                        logger.error(f"汇率通知器未查询到数据库中最近{2}天的数据，已自动终止")
+                        logger.error(f"汇率通知器未查询到数据库中最近{config.get_parameter('PLOT_RECENT_DAYS')}天的数据，已自动终止")
                         break
                     # 绘制折线图
-                    if not common_utils.plot_data(data, 2, config.get_parameter("PLOT_PATH")):
+                    if not common_utils.plot_data(data, int(config.get_parameter("PLOT_RECENT_DAYS")), config.get_parameter("PLOT_PATH")):
                         email_utils.send_email("汇率通知器报警",
                                         f"汇率通知器绘制图表失败，请检查服务器或程序是否正常！",
                                         config)
@@ -47,8 +47,6 @@ def main():
                     email_utils.send_email("新加坡汇率通知",
                                     f"当前SGD汇率为{current_rate}，低于设定阈值{config.get_parameter('RATE_THRESHOLD')}，可以考虑购汇！",
                                     config, image_path=config.get_parameter("PLOT_PATH"))
-                    # 删除折线图
-                    common_utils.delete_file(config.get_parameter("PLOT_PATH"))
             else:
                 nfound_count += 1 # 连续未找到数据计数加1
                 # 判断未找到数据次数是否大于阈值
