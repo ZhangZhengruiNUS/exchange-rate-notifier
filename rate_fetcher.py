@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from decorators import timeit
 from logger_config import setup_logger
-from utils import log_process_resources
+from utils.common_utils import log_process_resources
 
 logger = setup_logger(__name__)
 
@@ -46,18 +46,15 @@ def get_sgd_rate():
         driver = webdriver.Chrome(service=s, options=chrome_options)
 
         # 打开目标网页
-        log_process_resources()
         logger.info("正在打开网页...")
         driver.get(BASE_URL)
 
         # 定位到表格的父元素，确保表格加载完成
-        log_process_resources()
         logger.info("正在等待网页数据动态加载...")
         wait = WebDriverWait(driver, MAX_WAIT_TIME)  # 最多等待时间
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.el-table--mini')))  # 需要根据实际页面结构确定
 
         # 定位到外汇信息的表格
-        log_process_resources()
         logger.info("正在定位数据...")
         rows = driver.find_elements(By.XPATH, '//tr[contains(@class, "el-table__row")]')
 
