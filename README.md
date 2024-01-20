@@ -82,6 +82,7 @@
 - `QUERY_INTERVAL`: 检查汇率的时间间隔（以秒为单位）
 - `PLOT_PATH`: 绘制图片路径
 - `PLOT_RECENT_DAYS`: 绘制图片数据的最近天数
+- `LOG_LEVEL`: 日志级别（INFO/DEBUG）
 
 2. **运行应用程序:**
     ```python
