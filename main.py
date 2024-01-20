@@ -40,7 +40,7 @@ def main():
                         logger.error(f"汇率通知器未查询到数据库中最近{config.get_parameter('PLOT_RECENT_DAYS')}天的数据，已自动终止")
                         break
                     # 绘制折线图
-                    if not plot_utils.plot_recent_data(data, int(config.get_parameter("PLOT_RECENT_DAYS")), config.get_parameter("PLOT_PATH")):
+                    if not plot_utils.plot_recent_days_data(data, int(config.get_parameter("PLOT_RECENT_DAYS")), int(config.get_parameter("PLOT_RECENT_DAYS")), config.get_parameter("PLOT_PATH")):
                         email_utils.send_email("汇率通知器报警",
                                         f"汇率通知器绘制图表失败，请检查服务器或程序是否正常！",
                                         config)

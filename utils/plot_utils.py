@@ -10,7 +10,7 @@ logger = get_global_logger()
 
 @timeit
 @resources_debug_monitor
-def plot_recent_data(data, day_interval=2, thin_factor=2, path="exchange_rate_plot.png"):
+def plot_recent_days_data(data, day_interval=2, thin_factor=2, path="exchange_rate_plot.png"):
     # 校验数据
     if not data:
         logger.error("无可用数据来绘制图表！")
