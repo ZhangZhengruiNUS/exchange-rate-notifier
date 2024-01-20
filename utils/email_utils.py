@@ -3,10 +3,14 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-from logger_config import setup_logger
+from decorators import timeit, resources_debug_monitor
+from logger_config import get_global_logger
 
-logger = setup_logger(__name__)
+# 获取全局日志对象
+logger = get_global_logger()
 
+@timeit
+@resources_debug_monitor
 def send_email(subject, msg_body, config, image_path=None):
     # 创建邮件
     logger.info("正在创建邮件...")
