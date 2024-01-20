@@ -5,17 +5,18 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from decorators import timeit
-from logger_config import setup_logger
-from utils.common_utils import log_process_resources
+from decorators import timeit, resources_debug_monitor
+from logger_config import get_global_logger
 
-logger = setup_logger(__name__)
+# 获取全局日志对象
+logger = get_global_logger()
 
 # 常量定义
 BASE_URL = 'https://www.icbc.com.cn/column/1438058341489590354.html'  # 目标URL
 MAX_WAIT_TIME = 30  # 最大等待时间，单位秒
 
 @timeit
+@resources_debug_monitor
 def get_sgd_rate():
     
     found = False  # 标记是否找到数据
@@ -32,7 +33,6 @@ def get_sgd_rate():
         s = Service(chrome_driver_path)
 
         # 初始化webdriver
-        log_process_resources()
         logger.info("正在初始化webdriver...")
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--headless")  # 无头模式
