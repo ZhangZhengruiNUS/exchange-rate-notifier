@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 LOG_DIR = 'logs'  # 日志文件相对目录
 LOG_FILE_PREFIX = "app"  # 日志文件前缀
 
+def custom_log_file_path():
+    return os.path.join(LOG_DIR, LOG_FILE_PREFIX)
+
 def setup_global_logger():
     # 创建日志文件路径
     if not os.path.exists(LOG_DIR):
@@ -15,13 +18,17 @@ def setup_global_logger():
     log_file_path = custom_log_file_path()
 
     # 创建TimedRotatingFileHandler
-    file_handler = TimedRotatingFileHandler(log_file_path,
-                                            when="midnight",
-                                            interval=1, # 每天轮换一次
-                                            backupCount=7)  # 保留7天
+    file_handler = TimedRotatingFileHandler(
+        log_file_path,  # 日志文件路径
+        when="midnight", # 每天午夜轮换
+        interval=1, # 每天轮换一次
+        backupCount=7, # 保留7天
+        encoding='utf-8'
+    )
     formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')  #设置日志格式
     file_handler.setFormatter(formatter)
-
+    file_handler.suffix = "%Y-%m-%d.log"  # 设置日志文件日期后缀格式
+    
     # 加载环境变量
     load_dotenv()
 
@@ -43,9 +50,6 @@ def get_global_logger():
     if not logging.getLogger().hasHandlers():
         setup_global_logger()
     return logging.getLogger(__name__)
-
-def custom_log_file_path():
-    return LOG_DIR + "/" + LOG_FILE_PREFIX + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'
 
 if __name__ == "__main__":
     pass
