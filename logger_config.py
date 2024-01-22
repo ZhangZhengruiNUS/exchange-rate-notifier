@@ -1,4 +1,3 @@
-from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
@@ -28,6 +27,7 @@ def setup_global_logger():
     formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')  #设置日志格式
     file_handler.setFormatter(formatter)
     file_handler.suffix = "%Y-%m-%d.log"  # 设置日志文件日期后缀格式
+    file_handler.namer = lambda name: "_".join(name.partition(".")[::2])  # 将日志文件名中的第一个点替换为下划线
     
     # 加载环境变量
     load_dotenv()
