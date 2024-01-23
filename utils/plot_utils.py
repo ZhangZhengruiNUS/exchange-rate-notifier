@@ -10,7 +10,7 @@ logger = get_global_logger()
 
 @timeit
 @resources_debug_monitor
-def plot_recent_days_data(data, day_interval=2, thin_factor=2, path="exchange_rate_plot.png"):
+def plot_recent_days_data(data, day_interval=2, thin_factor=2, hour_internal=3, path="exchange_rate_plot.png"):
     # 校验数据
     if not data:
         logger.error("无可用数据来绘制图表！")
@@ -30,7 +30,7 @@ def plot_recent_days_data(data, day_interval=2, thin_factor=2, path="exchange_ra
 
     # 设置日期格式
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-    plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=3))
+    plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=hour_internal))
 
     # 自动旋转日期标记以避免重叠
     plt.gcf().autofmt_xdate(rotation=15)
