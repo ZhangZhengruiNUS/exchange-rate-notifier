@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
@@ -7,27 +8,29 @@ from dotenv import load_dotenv
 LOG_DIR = 'logs'  # 日志文件相对目录
 LOG_FILE_PREFIX = "app"  # 日志文件前缀
 
-def custom_log_file_path():
-    return os.path.join(LOG_DIR, LOG_FILE_PREFIX)
+def custom_log_file_path(name=None, initial=False):
+    if initial:
+        return LOG_DIR + "/" + LOG_FILE_PREFIX + "_today" + '.log'
+    else:
+        return LOG_DIR + "/" + LOG_FILE_PREFIX + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'
 
 def setup_global_logger():
     # 创建日志文件路径
     if not os.path.exists(LOG_DIR):
         os.makedirs(LOG_DIR)
-    log_file_path = custom_log_file_path()
+    initial_log_file_path = custom_log_file_path(initial=True)
 
     # 创建TimedRotatingFileHandler
     file_handler = TimedRotatingFileHandler(
-        log_file_path,  # 日志文件路径
+        initial_log_file_path,  # 初始日志文件路径
         when="midnight", # 每天午夜轮换
         interval=1, # 每天轮换一次
         backupCount=7, # 保留7天
         encoding='utf-8'
     )
-    formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')  #设置日志格式
-    file_handler.setFormatter(formatter)
-    file_handler.suffix = "%Y-%m-%d.log"  # 设置日志文件日期后缀格式
-    file_handler.namer = lambda name: "_".join(name.partition(".")[::2])  # 将日志文件名中的第一个点替换为下划线
+    formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
+    file_handler.setFormatter(formatter)  #设置日志格式
+    file_handler.namer = custom_log_file_path  # 文件轮换时的命名函数
     
     # 加载环境变量
     load_dotenv()
