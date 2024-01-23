@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
@@ -10,9 +10,11 @@ LOG_FILE_PREFIX = "app"  # 日志文件前缀
 
 def custom_log_file_path(name=None, initial=False):
     if initial:
+        # 当日记录的日志文件的路径
         return LOG_DIR + "/" + LOG_FILE_PREFIX + "_today" + '.log'
     else:
-        return LOG_DIR + "/" + LOG_FILE_PREFIX + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'
+        # 轮换时的前一天日志文件的路径
+        return LOG_DIR + "/" + LOG_FILE_PREFIX + "_" + (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d") + '.log'
 
 def setup_global_logger():
     # 创建日志文件路径
