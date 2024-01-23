@@ -50,10 +50,11 @@ def main():
                                         config)
                         logger.error(f"汇率通知器绘制图表失败，已自动终止")
                         break
-                    # 发送提醒邮件
-                    email_utils.send_email("新加坡汇率通知",
-                                    f"当前SGD汇率为{current_rate}，低于设定阈值{config.get_parameter('RATE_THRESHOLD')}，可以考虑购汇！",
-                                    config, image_path=config.get_parameter("PLOT_PATH"))
+                    # 若当前时间在指定时间范围内，则发送邮件
+                    if common_utils.check_time_in_range(config.get_parameter("NOTIFY_START_TIME"), config.get_parameter("NOTIFY_END_TIME")):
+                        email_utils.send_email("新加坡汇率通知",
+                                        f"当前SGD汇率为{current_rate}，低于设定阈值{config.get_parameter('RATE_THRESHOLD')}，可以考虑购汇！",
+                                        config, image_path=config.get_parameter("PLOT_PATH"))
             else:
                 nfound_count += 1 # 连续未找到数据计数加1
                 # 判断未找到数据次数是否大于阈值

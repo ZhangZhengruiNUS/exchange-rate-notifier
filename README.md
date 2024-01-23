@@ -83,6 +83,8 @@
 - `PLOT_PATH`: 绘制图片路径
 - `PLOT_RECENT_DAYS`: 绘制图片数据的最近天数
 - `LOG_LEVEL`: 日志级别（INFO/DEBUG）
+- `NOTIFY_START_TIME`: 每日邮件通知开始时间（格式：MM:SS）
+- `NOTIFY_END_TIME`: 每日邮件通知结束时间（格式：MM:SS）
 
 2. **运行应用程序:**
     ```python

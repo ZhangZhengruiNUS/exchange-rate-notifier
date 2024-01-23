@@ -1,4 +1,5 @@
 import os
+import time
 import psutil
 from logger_config import get_global_logger
 
@@ -25,3 +26,24 @@ def log_process_resources(prompt_info, log_level="info"):
 def delete_file(path):
     if os.path.isfile(path):
         os.remove(path)
+   
+def check_time_in_range(start_time, end_time):
+    result = False
+    # 获取当前时间
+    current_time = time.localtime()
+    # 获取当前时间的小时和分钟
+    current_hour = current_time.tm_hour
+    current_minute = current_time.tm_min
+    # 获取开始时间的小时和分钟
+    start_hour = int(start_time.split(":")[0])
+    start_minute = int(start_time.split(":")[1])
+    # 获取结束时间的小时和分钟
+    end_hour = int(end_time.split(":")[0])
+    end_minute = int(end_time.split(":")[1])
+    # 判断当前时间是否在指定时间范围内
+    if (current_hour > start_hour and current_hour < end_hour) or \
+        (current_hour == start_hour and current_minute >= start_minute) or \
+        (current_hour == end_hour and current_minute <= end_minute):
+        result = True
+    logger.info(f"当前时间{current_hour}:{current_minute}是否在{start_hour}:{start_minute}到{end_hour}:{end_minute}之间: {result}")
+    return result
