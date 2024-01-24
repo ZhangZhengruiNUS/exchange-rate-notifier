@@ -10,7 +10,7 @@ logger = get_global_logger()
 
 @timeit
 @resources_debug_monitor
-def plot_recent_days_data(data, day_interval=2, thin_factor=2, hour_internal=3, path="exchange_rate_plot.png"):
+def plot_recent_days_data(data, day_interval=2, thin_factor=2, hour_internal=3, path="exchange_rate_plot.png", is_show=False):
     # 校验数据
     if not data:
         logger.error("无可用数据来绘制图表！")
@@ -81,9 +81,12 @@ def plot_recent_days_data(data, day_interval=2, thin_factor=2, hour_internal=3, 
     # 添加网格线
     plt.grid(True)
     
-    # 保存图表
-    plt.savefig(path, dpi=150)
-    plt.close()  #关闭图形，否则会留在内存里
+    if is_show:
+        plt.show()
+    else:
+        # 保存图表
+        plt.savefig(path, dpi=150)
+        plt.close()  #关闭图形，否则会留在内存里
     logger.info("已绘制完成")
     
     return True
