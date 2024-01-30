@@ -52,7 +52,7 @@ def get_sgd_rate():
         # 定位到表格的父元素，确保表格加载完成
         logger.info("正在等待网页数据动态加载...")
         wait = WebDriverWait(driver, MAX_WAIT_TIME)  # 最多等待时间
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.el-table--mini')))  # 需要根据实际页面结构确定
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.el-table__row')))  # 等待目标样式id出现
 
         # 定位到外汇信息的表格
         logger.info("正在定位数据...")
