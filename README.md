@@ -85,6 +85,7 @@
 - `LOG_LEVEL`: 日志级别（INFO/DEBUG）
 - `NOTIFY_START_TIME`: 每日邮件通知开始时间（格式：MM:SS）
 - `NOTIFY_END_TIME`: 每日邮件通知结束时间（格式：MM:SS）
+- `LOG_RETENTION_DAYS`: 日志保留天数（若不设置，则默认保留7天）
 
 2. **运行应用程序:**
     ```python
