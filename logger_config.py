@@ -30,7 +30,7 @@ def setup_global_logger():
         initial_log_file_path,  # 初始日志文件路径
         when="midnight", # 每天午夜轮换
         interval=1, # 每天轮换一次
-        backupCount=os.getenv('LOG_RETENTION_DAYS', 7), # 日志保留天数，默认7天
+        backupCount=int(os.getenv('LOG_RETENTION_DAYS', 7)), # 日志保留天数，默认7天
         encoding='utf-8'
     )
     formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s', '%Y-%m-%d %H:%M:%S')
