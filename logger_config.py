@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import glob
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
@@ -18,18 +19,28 @@ def custom_log_file_path(name=None, initial=False):
 
 class CustomTimedRotatingFileHandler(TimedRotatingFileHandler):
     def doRollover(self):
-        # 确保父类的轮换逻辑先执行
-        dirName, baseName = os.path.split(self.baseFilename)
-        fileNames = os.listdir(dirName)
-        logging.debug(f"日志文件夹dirName: {dirName}下的文件列表：{fileNames} baseName:{baseName}")
-        logging.debug(f"日志轮换时要删除的文件列表：{self.getFilesToDelete()}")
+        # 执行父类的轮换操作
         super().doRollover()
-        logging.debug(f"日志轮换后要删除的文件列表：{self.getFilesToDelete()}")
-        # 轮换后删除超出备份数量的文件
-        if self.backupCount > 0:
-            for s in self.getFilesToDelete():
-                os.remove(s)
-                logging.info(f"Deleted log file {s}")
+        # 执行删除旧文件
+        self.remove_old_logs()
+    
+    def remove_old_logs(self):
+        # 获取所有日志文件
+        files = glob.glob(os.path.join(LOG_DIR, LOG_FILE_PREFIX + "_*.log"))
+        # 确定保留的文件名
+        keep_files = set()
+        for i in range(self.backupCount + 1):  # 包括今天和之前的backupCount天
+            date_suffix = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
+            if i == 0:
+                keep_files.add(os.path.join(LOG_DIR, LOG_FILE_PREFIX + "_today.log"))
+            else:
+                keep_files.add(os.path.join(LOG_DIR, LOG_FILE_PREFIX + "_" + date_suffix + ".log"))
+
+        # 删除旧文件
+        for file in files:
+            if file not in keep_files:
+                os.remove(file)
+                logging.info(f"Deleted old log file: {file}")
 
 def setup_global_logger():
     # 创建日志文件路径
@@ -64,7 +75,7 @@ def setup_global_logger():
         logging.getLogger().addHandler(console_handler)
         
     logger = logging.getLogger(__name__)
-    logger.info(f"已创建全局日志记录器{__name__} 日志文件夹路径为{LOG_DIR} 日志保留天数为{backup_count}天")
+    logger.info(f"已创建全局日志记录器{__name__} 日志文件夹路径为{LOG_DIR} 日志保留天数为{backup_count}天 日志级别为{log_level}")
 
 def get_global_logger():
     # 检查是否已经有日志配置，如果没有，进行基本配置
