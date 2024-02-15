@@ -61,12 +61,13 @@ def get_sgd_rate():
         # 遍历表格行，寻找新加坡元的现汇卖出价
         for row in rows:
             cells = row.find_elements(By.TAG_NAME, 'td')
-            currency = cells[0].text.strip()  # 币种名称
-            if "新加坡元(SGD)" in currency:
-                exchange_rate = float(cells[3].text.strip())  # 现汇卖出价
-                logger.info(f"新加坡元(SGD)的现汇卖出价为:{str(exchange_rate)}")
-                found = True
-                break
+            if cells and cells[0] is not None:
+                currency = cells[0].text.strip()  # 币种名称
+                if "新加坡元(SGD)" in currency:
+                    exchange_rate = float(cells[3].text.strip())  # 现汇卖出价
+                    logger.info(f"新加坡元(SGD)的现汇卖出价为:{str(exchange_rate)}")
+                    found = True
+                    break
 
         if not found:
             logger.warning("没有找到新加坡元的现汇卖出价")
