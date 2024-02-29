@@ -1,7 +1,7 @@
 import boto3
 from decimal import Decimal
 from datetime import datetime, timedelta
-from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Key
 from decorators import timeit, resources_debug_monitor
 from logger_config import get_global_logger
 
@@ -35,23 +35,30 @@ def query_recent_days_data(day_interval=2):
     # 创建 DynamoDB 资源
     table = create_dynamodb_resource()
     
-    # 计算起始日期
-    start_date = datetime.now() - timedelta(days=(day_interval-1))
-    start_date_str = start_date.strftime('%Y-%m-%d')
+    # 计算待查询日期
+    today = datetime.now()
+    dates_to_query = [today - timedelta(days=i) for i in range(day_interval)]
+
 
     # 查询数据
     logger.info(f"正在查询最近{day_interval}天的数据...")
-    response = table.scan(FilterExpression=Attr('Date').gte(start_date_str))
+    results = []
+    for query_date in dates_to_query:
+        date_str = query_date.strftime('%Y-%m-%d')
+        response = table.query(
+            KeyConditionExpression=Key('Date').eq(date_str)
+        )
+        if not response['Items']:
+            logger.error(f"Date={date_str} 未找到数据！")
+            return None
+        results.extend(response['Items'])
 
-    if not response['Items']:
-        logger.error("未找到数据！")
-        return None
-    logger.info(f"已查询到{len(response['Items'])}条数据...")
+    logger.info(f"已查询到{len(results)}条数据...")
     
     # 拆分数据
-    dates = [item['Date'] for item in response['Items']]
-    times = [item['Time'] for item in response['Items']]
-    rates = [float(item['Rate']) for item in response['Items']]
+    dates = [item['Date'] for item in results]
+    times = [item['Time'] for item in results]
+    rates = [float(item['Rate']) for item in results]
     
     # 排序以及合并数据
     data = sorted([(datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M:%S"), rate) for date, time, rate in zip(dates, times, rates)])
