@@ -22,6 +22,11 @@ def main():
     try:
         while True:
             common_utils.log_process_resources("开始新的循环", "info")
+            # 判断是否为工作日
+            if not common_utils.check_weekday():
+                logger.info("当前为非工作日，跳过查询")
+                time.sleep(3600)
+                continue
             # 获取最新汇率
             found, current_rate = get_sgd_rate()
             # 判断是否找到数据

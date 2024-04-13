@@ -47,3 +47,14 @@ def check_time_in_range(start_time, end_time):
         result = True
     logger.info(f"当前时间{current_hour}:{current_minute}是否在{start_hour}:{start_minute}到{end_hour}:{end_minute}之间: {result}")
     return result
+
+def check_weekday():
+    # 获取当前时间
+    current_time = time.localtime()
+    # 获取当前时间的星期
+    current_weekday = current_time.tm_wday
+    # 判断是否为工作日
+    if current_weekday < 5:
+        return True
+    else:
+        return False
