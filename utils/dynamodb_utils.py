@@ -48,10 +48,12 @@ def query_recent_days_data(day_interval=2):
         response = table.query(
             KeyConditionExpression=Key('Date').eq(date_str)
         )
-        if not response['Items']:
-            logger.error(f"Date={date_str} 未找到数据！")
-            return None
-        results.extend(response['Items'])
+        if response['Items']:
+            results.extend(response['Items'])
+        
+    if len(results) == 0:
+        logger.error("未找到任何数据！")
+        return None
 
     logger.info(f"已查询到{len(results)}条数据...")
     
@@ -73,4 +75,4 @@ def create_dynamodb_resource():
     return table
     
 if __name__ == '__main__':
-    query_recent_days_data()
+    print(query_recent_days_data())
